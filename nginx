@@ -1,0 +1,25 @@
+  listen 443 default_server;
+  listen [::]:443 default_server;
+  add_header X-Frame-Options DENY;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+  add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains; preload' always;
+  ssl on;
+  ssl_ciphers EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA512:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:ECDH+AESGCM:ECDH+AES256:DH+AESGCM:DH+AES256:RSA+AESGCM:!aNULL:!eNULL:!LOW:!RC4:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
+  ssl_session_cache shared:TLS:2m;
+  ssl_buffer_size 4k;
+  ssl_stapling on;
+  ssl_stapling_verify on;
+  ssl_protocols       TLSv1.2 TLSv1.3;
+  ssl_dhparam    /opt/cert/dhparams.pem;
+  ssl_certificate /etc/letsencrypt/live/you.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/you.com/privkey.pem;
+  if ($request_method !~ ^(GET|HEAD)$ )
+  {
+    return 405;
+  }
+  index index.html;
+  server_name you.com;
+  location / {
+    try_files $uri $uri/ =404;
+  }  
